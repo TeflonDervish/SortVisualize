@@ -10,6 +10,6 @@ This program not only promotes an understanding of how sorting algorithms functi
 
 ![initial data set](Readme/Nabor.png)
 
-#
+# Sorting data set
 
 ![Локальное изображение](Readme/Sorting.png)
