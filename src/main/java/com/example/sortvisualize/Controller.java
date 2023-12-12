@@ -201,7 +201,6 @@ public class Controller {
 
     @FXML
     void startOnNewWindow(ActionEvent event) {
-
         // Добавление вкладки
         Tab tab = new Tab(chosenSort.getValue());
         tabPane.getTabs().add(tab);
