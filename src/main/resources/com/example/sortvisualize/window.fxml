@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -16,12 +17,14 @@
    <right>
       <AnchorPane prefHeight="648.0" prefWidth="270.0" style="-fx-border-color: #000000; -fx-border-radius: 5;" BorderPane.alignment="CENTER">
          <children>
-            <ComboBox fx:id="chosenSort" layoutX="20.0" layoutY="14.0" prefHeight="25.0" prefWidth="241.0" promptText="Сортировка пузырьком" />
-            <Slider fx:id="countSlider" layoutX="25.0" layoutY="55.0" min="10.0" onScroll="#changeCount" prefHeight="14.0" prefWidth="154.0" value="10.0" />
-            <TextField fx:id="count" layoutX="183.0" layoutY="49.0" prefHeight="25.0" prefWidth="73.0" text="10" />
+            <ComboBox fx:id="chosenSort" layoutX="20.0" layoutY="14.0" prefHeight="25.0" prefWidth="241.0" promptText="Сортировка пузырьком" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="15.0" />
+            <Slider fx:id="countSlider" layoutX="25.0" layoutY="55.0" min="10.0" onScroll="#changeCount" prefHeight="14.0" prefWidth="154.0" value="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="60.0" />
+            <TextField fx:id="count" layoutX="183.0" layoutY="49.0" prefHeight="25.0" prefWidth="73.0" text="10" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="55.0" />
             <Button layoutX="35.0" layoutY="467.0" mnemonicParsing="false" onAction="#startOnCurrentWindow" prefHeight="25.0" prefWidth="148.0" text="Запуск в текщуем окне" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
             <Button layoutX="20.0" layoutY="558.0" mnemonicParsing="false" onAction="#closeWindow" text="Закрыть окно" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
             <Button layoutX="25.0" layoutY="529.0" mnemonicParsing="false" onAction="#startOnNewWindow" text="Запуск в новом окне" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+            <TextArea fx:id="description" editable="false" layoutX="35.0" layoutY="98.0" prefHeight="250.0" prefWidth="200.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0" />
+            <TextField fx:id="iterationCount" editable="false" layoutX="21.0" layoutY="368.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="365.0" />
          </children>
          <BorderPane.margin>
             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
@@ -32,11 +35,10 @@
       <AnchorPane prefHeight="44.0" prefWidth="940.0" style="-fx-border-color: #000000; -fx-border-radius: 5;" BorderPane.alignment="CENTER">
          <children>
             <Button layoutX="32.0" layoutY="10.0" mnemonicParsing="false" onAction="#shuffle" prefWidth="100.0" text="Перемешать" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-            <Button layoutX="128.0" layoutY="10.0" mnemonicParsing="false" onAction="#runSort" prefWidth="100.0" text="Запустить" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="10.0" />
-            <Button layoutX="828.0" layoutY="10.0" mnemonicParsing="false" onAction="#setTimeDelay" prefWidth="120.0" text="Установить" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-            <TextField fx:id="timeDelay" layoutX="708.0" layoutY="10.0" prefHeight="25.0" prefWidth="87.0" text="100" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="145.0" AnchorPane.topAnchor="10.0" />
-            <Button layoutX="240.0" layoutY="10.0" mnemonicParsing="false" onAction="#stopSort" prefWidth="100.0" text="Остановить" AnchorPane.leftAnchor="230.0" />
-            <Label layoutX="613.0" layoutY="15.0" text="Время задержки" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="240.0" AnchorPane.topAnchor="10.0" />
+            <Button fx:id="resumeButton" layoutX="128.0" layoutY="10.0" mnemonicParsing="false" onAction="#continueSort" prefWidth="100.0" text="Продолжить" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="10.0" />
+            <TextField fx:id="timeDelay" layoutX="708.0" layoutY="10.0" prefHeight="25.0" prefWidth="87.0" text="10" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0" />
+            <Button fx:id="stopButton" layoutX="240.0" layoutY="10.0" mnemonicParsing="false" prefWidth="100.0" text="Остановить" AnchorPane.leftAnchor="230.0" />
+            <Label layoutX="613.0" layoutY="15.0" text="Время задержки:" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="10.0" />
          </children>
          <BorderPane.margin>
             <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
