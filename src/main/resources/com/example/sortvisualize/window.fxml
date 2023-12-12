@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -17,7 +15,7 @@
    <right>
       <AnchorPane prefHeight="648.0" prefWidth="270.0" style="-fx-border-color: #000000; -fx-border-radius: 5;" BorderPane.alignment="CENTER">
          <children>
-            <ComboBox fx:id="chosenSort" layoutX="20.0" layoutY="14.0" prefHeight="25.0" prefWidth="241.0" promptText="Сортировка пузырьком" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="15.0" />
+            <ComboBox fx:id="chosenSort" layoutX="20.0" layoutY="14.0" prefHeight="25.0" prefWidth="241.0" promptText="BubbleSort" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="15.0" />
             <Slider fx:id="countSlider" layoutX="25.0" layoutY="55.0" min="10.0" onScroll="#changeCount" prefHeight="14.0" prefWidth="154.0" value="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="60.0" />
             <TextField fx:id="count" layoutX="183.0" layoutY="49.0" prefHeight="25.0" prefWidth="73.0" text="10" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="55.0" />
             <Button layoutX="35.0" layoutY="467.0" mnemonicParsing="false" onAction="#startOnCurrentWindow" prefHeight="25.0" prefWidth="148.0" text="Запуск в текщуем окне" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
@@ -48,17 +46,7 @@
    <center>
       <AnchorPane style="-fx-border-color: #000000; -fx-border-radius: 5;" BorderPane.alignment="CENTER">
          <children>
-            <TabPane layoutX="140.0" layoutY="62.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <tabs>
-                <Tab fx:id="bubleSort" text="Сортировка пузырьком">
-                     <content>
-                        <AnchorPane>
-                           <children>
-                              <Canvas fx:id="canvasBubbleSort" height="500.0" layoutX="66.0" layoutY="58.0" width="700.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                           </children></AnchorPane>
-                     </content>
-                  </Tab>
-              </tabs>
+            <TabPane fx:id="tabPane" layoutX="140.0" layoutY="62.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <padding>
                   <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                </padding>

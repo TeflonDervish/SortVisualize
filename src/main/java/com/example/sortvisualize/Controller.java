@@ -8,9 +8,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.converter.IntegerStringConverter;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.function.UnaryOperator;
 
 import static javafx.collections.FXCollections.observableArrayList;
@@ -18,13 +20,10 @@ import static javafx.collections.FXCollections.observableArrayList;
 public class Controller {
 
     @FXML
-    private Button resumeButton, stopButton;
+    private Button stopButton;
 
     @FXML
-    private Canvas canvasBubbleSort;
-
-    @FXML
-    private Tab bubleSort;
+    private TabPane tabPane;
 
     @FXML
     private ComboBox<String> chosenSort;
@@ -43,15 +42,52 @@ public class Controller {
 
     @FXML
     private TextField iterationCount;
-    private volatile boolean paused = false;
-    private SortingAlgorithm sortingAlgorithm;
-    GraphicsContext gc;
-    Thread mainTread;
+
+
+    private ArrayList<Tab> tabs;
+    private ArrayList<Canvas> canvases;
+    private ArrayList<GraphicsContext> graphicsContexts;
+    private ArrayList<Boolean> isFinishedThread;
+    private ArrayList<SortingAlgorithm> sortingAlgorithms;
+    private ArrayList<Thread> threads;
+    private int currentTab;
+
 
     @FXML
     void initialize(){
+        // Для работоты с вкладками
+        tabs = new ArrayList<>();
+        canvases = new ArrayList<>();
+        graphicsContexts = new ArrayList<>();
+        isFinishedThread = new ArrayList<>();
+        sortingAlgorithms = new ArrayList<>();
+        threads = new ArrayList<>();
+
+        // Первая вкладка
+        Tab tab = new Tab("BubbleSort");
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(0);
+        tabs.add(tab);
+
+        // Помещаем содержимое на вкладку
+        Canvas canvas = new Canvas(700, 500);
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().setAll(canvas);
+        tab.setContent(anchorPane);
+        canvases.add(canvas);
+
+        // Для работы с потоками
+        isFinishedThread.add(true);
+        threads.add(new Thread());
+
         // Для рисования
-        gc = canvasBubbleSort.getGraphicsContext2D();
+        graphicsContexts.add(canvases.get(currentTab).getGraphicsContext2D());
+
+        // Для работы алгоритмов
+        SortingAlgorithm sortingAlgorithm = new SortingAlgorithm(graphicsContexts.get(currentTab), 10);
+        sortingAlgorithms.add(sortingAlgorithm);
+        sortingAlgorithms.get(currentTab).drawArray();
+
 
         // Выбор кол-ва элементов
         count.textProperty().bindBidirectional(countSlider.valueProperty(), NumberFormat.getNumberInstance());
@@ -69,8 +105,7 @@ public class Controller {
         ObservableList<String> items = observableArrayList("InsertionSort", "SelectionSort", "BubbleSort",
                                                             "QuickSort", "ShellSort", "ShakerSort",
                                                             "GnomeSort", "HeapSort",
-                                                            "MergeSort", "CombSort", "CountingSort",
-                                                            "TournamentSort");
+                                                            "MergeSort", "CombSort", "CountingSort");
         chosenSort.setItems(items);
         chosenSort.setValue("BubbleSort");
 
@@ -79,11 +114,14 @@ public class Controller {
         timeDelay.setTextFormatter(textFormatter);
 
         // Для паузы
-        stopButton.setOnAction(event -> {mainTread.interrupt(); sortingAlgorithm.drawArray();});
+        stopButton.setOnAction(event -> {threads.get(currentTab).interrupt(); sortingAlgorithm.drawArray();});
 
-        // Массив для сортировки
-        sortingAlgorithm = new SortingAlgorithm(gc, 10);
-        sortingAlgorithm.drawArray();
+        // Переключение индекса между вкладками
+        tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
+            if (newTab != null){
+                currentTab = tabPane.getSelectionModel().getSelectedIndex();
+            }
+        });
     }
 
     @FXML // Slider
@@ -97,81 +135,123 @@ public class Controller {
     }
 
     @FXML
-    void runSort(ActionEvent event) {
-
-    }
-
-    @FXML
     void shuffle(ActionEvent event) {
-        sortingAlgorithm.setLengthArray((int) countSlider.getValue());
-        sortingAlgorithm.drawArray();
+        sortingAlgorithms.get(currentTab).setLengthArray((int) countSlider.getValue());
+        sortingAlgorithms.get(currentTab).drawArray();
     }
 
     @FXML
     void startOnCurrentWindow(ActionEvent event) throws InterruptedException {
-        sortingAlgorithm.setLengthArray((int) countSlider.getValue());
-        sortingAlgorithm.drawArray();
+        sortingAlgorithms.get(currentTab).setLengthArray((int) countSlider.getValue());
+        sortingAlgorithms.get(currentTab).drawArray();
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 int delay = Integer.parseInt(timeDelay.getText());
-                sortingAlgorithm.iterration = 0;
+                sortingAlgorithms.get(currentTab).iterration = 0;
                 switch (chosenSort.getValue()){
-                    case "InsertionSort":   sortingAlgorithm.InsertionSort(delay); break;
-                    case "SelectionSort":   sortingAlgorithm.SelectionSort(delay); break;
-                    case "BubbleSort":  sortingAlgorithm.BubbleSort(delay); break;
-                    case "QuickSort":   sortingAlgorithm.QuickSort(0, sortingAlgorithm.getArray().size() - 1, delay); break;
-                    case "ShellSort":   sortingAlgorithm.ShellSort(delay); break;
-                    case "ShakerSort":  sortingAlgorithm.ShakerSort(delay); break;
-                    case "GnomeSort":   sortingAlgorithm.GnomeSort(delay); break;
-                    case "HeapSort":    sortingAlgorithm.HeapSort(delay); break;
-                    case "MergeSort":   sortingAlgorithm.MergeSort(delay); break;
-                    case "CombSort":    sortingAlgorithm.CombSort(delay); break;
-                    case "CountingSort":    sortingAlgorithm.CountingSort(delay); break;
-                    case "TournamentSort":  sortingAlgorithm.TournamentSort(delay); break;
+                    case "InsertionSort":   sortingAlgorithms.get(currentTab).InsertionSort(delay); break;
+                    case "SelectionSort":   sortingAlgorithms.get(currentTab).SelectionSort(delay); break;
+                    case "BubbleSort":  sortingAlgorithms.get(currentTab).BubbleSort(delay); break;
+                    case "QuickSort":   sortingAlgorithms.get(currentTab).QuickSort(0, sortingAlgorithms.get(currentTab).getArray().size() - 1, delay); break;
+                    case "ShellSort":   sortingAlgorithms.get(currentTab).ShellSort(delay); break;
+                    case "ShakerSort":  sortingAlgorithms.get(currentTab).ShakerSort(delay); break;
+                    case "GnomeSort":   sortingAlgorithms.get(currentTab).GnomeSort(delay); break;
+                    case "HeapSort":    sortingAlgorithms.get(currentTab).HeapSort(delay); break;
+                    case "MergeSort":   sortingAlgorithms.get(currentTab).MergeSort(delay); break;
+                    case "CombSort":    sortingAlgorithms.get(currentTab).CombSort(delay); break;
+                    case "CountingSort":    sortingAlgorithms.get(currentTab).CountingSort(delay); break;
                 }
 
-                iterationCount.setText(String.valueOf(sortingAlgorithm.iterration));
+                iterationCount.setText("Кол-во итераций: " + sortingAlgorithms.get(currentTab).iterration);
                 return null;
             }
         };
-        mainTread = new Thread(task);
-        mainTread.start();
+        threads.set(currentTab, new Thread(task));
+        threads.get(currentTab).start();
 
     }
 
     @FXML
     void continueSort(ActionEvent event) throws InterruptedException{
-        System.out.println(1);
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 int delay = Integer.parseInt(timeDelay.getText());
-                System.out.println(chosenSort.getValue());
                 switch (chosenSort.getValue()){
-                    case "InsertionSort":   sortingAlgorithm.InsertionSort(delay);
-                    case "SelectionSort":   sortingAlgorithm.SelectionSort(delay);
-                    case "BubbleSort":  sortingAlgorithm.BubbleSort(delay);
-                    case "QuickSort":   sortingAlgorithm.QuickSort(0, sortingAlgorithm.getArray().size(), delay);
-                    case "ShellSort":   sortingAlgorithm.ShellSort(delay);
-                    case "ShakerSort":  sortingAlgorithm.ShakerSort(delay);
-                    case "GnomeSort":   sortingAlgorithm.GnomeSort(delay);
-                    case "HeapSort":    sortingAlgorithm.HeapSort(delay);
-                    case "MergeSort":   sortingAlgorithm.MergeSort(delay);
-                    case "CombSort":    sortingAlgorithm.CombSort(delay);
-                    case "CountingSort":    sortingAlgorithm.CountingSort(delay);
-                    case "TournamentSort":  sortingAlgorithm.TournamentSort(delay);
+                    case "InsertionSort":   sortingAlgorithms.get(currentTab).InsertionSort(delay);
+                    case "SelectionSort":   sortingAlgorithms.get(currentTab).SelectionSort(delay);
+                    case "BubbleSort":  sortingAlgorithms.get(currentTab).BubbleSort(delay);
+                    case "QuickSort":   sortingAlgorithms.get(currentTab).QuickSort(0, sortingAlgorithms.get(currentTab).getArray().size(), delay);
+                    case "ShellSort":   sortingAlgorithms.get(currentTab).ShellSort(delay);
+                    case "ShakerSort":  sortingAlgorithms.get(currentTab).ShakerSort(delay);
+                    case "GnomeSort":   sortingAlgorithms.get(currentTab).GnomeSort(delay);
+                    case "HeapSort":    sortingAlgorithms.get(currentTab).HeapSort(delay);
+                    case "MergeSort":   sortingAlgorithms.get(currentTab).MergeSort(delay);
+                    case "CombSort":    sortingAlgorithms.get(currentTab).CombSort(delay);
+                    case "CountingSort":    sortingAlgorithms.get(currentTab).CountingSort(delay);
                 }
+                iterationCount.setText("Кол-во итераций: " + sortingAlgorithms.get(currentTab).iterration);
                 return null;
             }
         };
-        mainTread = new Thread(task);
-        mainTread.start();
+        threads.set(currentTab, new Thread(task));
+        threads.get(currentTab).start();
     }
 
     @FXML
     void startOnNewWindow(ActionEvent event) {
 
+        // Добавление вкладки
+        Tab tab = new Tab(chosenSort.getValue());
+        tabPane.getTabs().add(tab);
+        tabPane.getSelectionModel().select(++currentTab);
+        tabs.add(tab);
+
+        // Помещаем содержимое на вкладку
+        Canvas canvas = new Canvas(700, 500);
+        AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().setAll(canvas);
+        tab.setContent(anchorPane);
+        canvases.add(canvas);
+
+        // Для работы с потоками
+        isFinishedThread.add(true);
+        threads.add(new Thread());
+
+        // Для рисования
+        graphicsContexts.add(canvases.get(currentTab).getGraphicsContext2D());
+
+        // Для работы алгоритмов
+        SortingAlgorithm sortingAlgorithm = new SortingAlgorithm(graphicsContexts.get(currentTab), (int) countSlider.getValue());
+        sortingAlgorithms.add(sortingAlgorithm);
+        sortingAlgorithms.get(currentTab).drawArray();
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                int delay = Integer.parseInt(timeDelay.getText());
+                sortingAlgorithms.get(currentTab).iterration = 0;
+                switch (chosenSort.getValue()){
+                    case "InsertionSort":   sortingAlgorithms.get(currentTab).InsertionSort(delay); break;
+                    case "SelectionSort":   sortingAlgorithms.get(currentTab).SelectionSort(delay); break;
+                    case "BubbleSort":  sortingAlgorithms.get(currentTab).BubbleSort(delay); break;
+                    case "QuickSort":   sortingAlgorithms.get(currentTab).QuickSort(0, sortingAlgorithms.get(currentTab).getArray().size() - 1, delay); break;
+                    case "ShellSort":   sortingAlgorithms.get(currentTab).ShellSort(delay); break;
+                    case "ShakerSort":  sortingAlgorithms.get(currentTab).ShakerSort(delay); break;
+                    case "GnomeSort":   sortingAlgorithms.get(currentTab).GnomeSort(delay); break;
+                    case "HeapSort":    sortingAlgorithms.get(currentTab).HeapSort(delay); break;
+                    case "MergeSort":   sortingAlgorithms.get(currentTab).MergeSort(delay); break;
+                    case "CombSort":    sortingAlgorithms.get(currentTab).CombSort(delay); break;
+                    case "CountingSort":    sortingAlgorithms.get(currentTab).CountingSort(delay); break;
+                }
+
+                iterationCount.setText("Кол-во итераций: " + sortingAlgorithms.get(currentTab).iterration);
+                return null;
+            }
+        };
+        threads.set(currentTab, new Thread(task));
+        threads.get(currentTab).start();
     }
 
 }

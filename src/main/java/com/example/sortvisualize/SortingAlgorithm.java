@@ -64,6 +64,10 @@ public class SortingAlgorithm {
             }
 
             array.set(j + 1, key);
+            iterration++;
+            drawArray();
+            drawCurrentPos(j, Color.RED);
+            Thread.sleep(delay);
         }
     }
     public void SelectionSort(int delay) throws InterruptedException {
@@ -81,6 +85,10 @@ public class SortingAlgorithm {
                 Thread.sleep(delay);
             }
             swap(array, minIndex, i);
+            iterration++;
+            drawArray();
+            drawCurrentPos(minIndex, Color.RED);
+            Thread.sleep(delay);
         }
     }
     public void BubbleSort(int delay) throws InterruptedException {
@@ -156,6 +164,10 @@ public class SortingAlgorithm {
                     Thread.sleep(delay);
                 }
                 array.set(j, temp);
+                iterration++;
+                drawArray();
+                drawCurrentPos(j, Color.RED);
+                Thread.sleep(delay);
             }
         }
     }
@@ -248,7 +260,6 @@ public class SortingAlgorithm {
         drawCurrentPos(i, Color.RED);
         Thread.sleep(delay);
     }
-
     public void MergeSort(int delay) throws InterruptedException {
         mergeSort(array, delay);
     }
@@ -339,52 +350,6 @@ public class SortingAlgorithm {
             drawArray();
             drawCurrentPos(i, Color.RED);
             Thread.sleep(delay);
-        }
-    }
-    public void TournamentSort(int delay) throws InterruptedException {
-        ArrayList<Integer> tree = new ArrayList<>(2 * array.size() - 1);
-
-        for (int i = 0; i < 2 * array.size() - 1; i++) {
-            tree.add(Integer.MAX_VALUE);
-        }
-
-        buildTree(array, tree, 0, array.size() - 1, 0, delay);
-        buildSortedArray(array, tree, 0, array.size() - 1, 0, delay);
-    }
-    private void buildTree(ArrayList<Integer> arr, ArrayList<Integer> tree, int start, int end, int treeNode, int delay) throws InterruptedException {
-        if (start == end) {
-            tree.set(treeNode, start);
-            return;
-        }
-
-        int mid = (start + end) / 2;
-
-        buildTree(arr, tree, start, mid, 2 * treeNode + 1, delay);
-        buildTree(arr, tree, mid + 1, end, 2 * treeNode + 2, delay);
-
-        if (arr.get(tree.get(2 * treeNode + 1)) < arr.get(tree.get(2 * treeNode + 2))) {
-            tree.set(treeNode, tree.get(2 * treeNode + 1));
-        } else {
-            tree.set(treeNode, tree.get(2 * treeNode + 2));
-        }
-        iterration++;
-        drawArray();
-        drawCurrentPos(mid, Color.RED);
-        Thread.sleep(delay);
-    }
-    private void buildSortedArray(ArrayList<Integer> arr, ArrayList<Integer> tree, int start, int end, int treeNode, int delay) throws InterruptedException {
-        if (start == end) {
-            arr.set(start, tree.get(treeNode));
-            return;
-        }
-
-        int minIndex = tree.get(treeNode);
-        int mid = (start + end) / 2;
-
-        if (arr.get(minIndex) != Integer.MAX_VALUE) {
-            swap(arr, start, minIndex);
-            buildTree(arr, tree, start, mid, 2 * treeNode + 1, delay);
-            buildTree(arr, tree, mid + 1, end, 2 * treeNode + 2, delay);
         }
     }
 
