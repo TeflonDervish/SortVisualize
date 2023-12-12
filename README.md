@@ -6,3 +6,10 @@ Choose from a diverse range of algorithms, including Bubble Sort, Insertion Sort
 
 This program not only promotes an understanding of how sorting algorithms function but also enables users to compare their performance on various datasets. Immerse yourself in the world of sorting algorithms and enhance your programming experience through this engaging visual representation!
 
+# initial data set 
+
+![initial data set](Readme/Nabor.png)
+
+#
+
+![Локальное изображение](Readme/Sorting.png)
