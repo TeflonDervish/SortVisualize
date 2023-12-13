@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.SubScene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -131,7 +132,31 @@ public class Controller {
 
     @FXML
     void closeWindow(ActionEvent event) {
+        if (tabs.size() == 1 ){
+            System.out.println("Закрыть вкладку невозможно");
+        }else{
 
+            if (currentTab == tabs.size() - 1){
+                tabPane.getTabs().remove(currentTab);
+                tabs.remove(currentTab);
+                canvases.remove(currentTab);
+                graphicsContexts.remove(currentTab);
+                isFinishedThread.remove(currentTab);
+                sortingAlgorithms.remove(currentTab);
+                threads.remove(currentTab);
+                currentTab = tabs.size() - 1;
+                tabPane.getSelectionModel().select(currentTab);
+            }else{
+                tabPane.getTabs().remove(currentTab);
+                tabs.remove(currentTab);
+                canvases.remove(currentTab);
+                graphicsContexts.remove(currentTab);
+                isFinishedThread.remove(currentTab);
+                sortingAlgorithms.remove(currentTab);
+                threads.remove(currentTab);
+                tabPane.getSelectionModel().select(currentTab);
+            }
+        }
     }
 
     @FXML

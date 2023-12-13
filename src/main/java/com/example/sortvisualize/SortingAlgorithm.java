@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class SortingAlgorithm {
 
